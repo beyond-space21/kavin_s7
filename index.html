@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Babylon.js Scene with Interactive Camera</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+
+</head>
+
+<body>
+    <div class="header">Dress colour matching</div>
+
+    <div class="cont">
+        <div class="tops box">
+
+
+            <div class="clr_hd">Shirt colour:</div>
+            <input type="color" id="shirt_clr" name="favcolor" value="#ffffff">
+            <button id="match_fr_shirt">match</button>
+
+            <br><br><br><br>
+
+            <div class="clr_hd">Pant colour:</div>
+            <input type="color" id="pant_clr" name="favcolor" value="#ffffff">
+            <button id="match_fr_pant">match</button>
+        </div>
+        <canvas id="renderCanvas" class="box"></canvas>
+    </div>
+
+    <script>
+        // Get the canvas element
+        const canvas = document.getElementById("renderCanvas");
+
+        // Create the Babylon.js engine
+        const engine = new BABYLON.Engine(canvas, true);
+
+        // Create a scene
+        const scene = new BABYLON.Scene(engine);
+
+        // Create an ArcRotateCamera with user input enabled
+        const camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", Math.PI / 2, Math.PI / 2.5, 10, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true); // Attach the camera to the canvas to enable user interaction
+
+        // Add a light to the scene
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0), scene);
+
+        BABYLON.SceneLoader.ShowLoadingScreen = false;
+
+        // Load the exported .babylon file
+        BABYLON.SceneLoader.Append("", "scene.babylon", scene, function () {
+            // The scene is loaded, and you can make further configurations here
+        });
+
+        // Render the scene
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        // Resize the engine when the window is resized
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+
+
+        setInterval(() => {
+            scene.meshes[0].rotation.y += 0.01
+            scene.meshes[1].rotation.y += 0.01
+        }, 10)
+
+
+        function make_shirt_colour(clr) {
+            const firstMesh = scene.meshes[0];
+            if (firstMesh) {
+                // Remove any existing material
+                firstMesh.material.dispose();
+
+                // Create a new StandardMaterial
+                const material = new BABYLON.StandardMaterial("meshMaterial", scene);
+                const hexColor = BABYLON.Color3.FromHexString(clr);
+                material.diffuseColor = hexColor;
+
+                // Apply the new material
+                firstMesh.material = material;
+            }
+        }
+
+        function make_pant_colour(clr) {
+            const firstMesh = scene.meshes[1];
+            if (firstMesh) {
+                // Remove any existing material
+                firstMesh.material.dispose();
+
+                // Create a new StandardMaterial
+                const material = new BABYLON.StandardMaterial("meshMaterial", scene);
+                const hexColor = BABYLON.Color3.FromHexString(clr);
+                material.diffuseColor = hexColor;
+
+                // Apply the new material
+                firstMesh.material = material;
+            }
+        }
+
+
+
+
+        // Function to convert HEX to RGB
+        function hexToRgb(hex) {
+            hex = hex.replace("#", "");
+            const bigint = parseInt(hex, 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return [r, g, b];
+        }
+
+        // Function to convert RGB to HEX
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+
+        function complementary(hexColor){
+        const [r, g, b] = hexToRgb(hexColor);
+        const compR = 255 - r;
+        const compG = 255 - g;
+        const compB = 255 - b;
+        return rgbToHex(compR, compG, compB);
+        }
+
+
+        document.getElementById('match_fr_shirt').onclick = ()=>{
+            make_shirt_colour(document.getElementById('shirt_clr').value)
+            make_pant_colour(complementary(document.getElementById('shirt_clr').value))
+        }
+
+
+        document.getElementById('match_fr_pant').onclick = ()=>{
+            make_shirt_colour(complementary(document.getElementById('pant_clr').value))
+            make_pant_colour(document.getElementById('pant_clr').value)
+        }
+
+
+    </script>
+</body>
+
+</html>
