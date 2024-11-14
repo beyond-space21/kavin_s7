@@ -154,13 +154,17 @@
 
         document.getElementById('match_fr_shirt').onclick = () => {
             make_shirt_colour(document.getElementById('shirt_clr').value)
-            make_pant_colour(complementary(document.getElementById('shirt_clr').value))
+            var comp = complementary(document.getElementById('shirt_clr').value)
+            make_pant_colour(comp)
+            document.getElementById('pant_clr').value = comp
         }
 
 
         document.getElementById('match_fr_pant').onclick = () => {
-            make_shirt_colour(complementary(document.getElementById('pant_clr').value))
             make_pant_colour(document.getElementById('pant_clr').value)
+            var comp = complementary(document.getElementById('pant_clr').value)
+            make_shirt_colour(comp)
+            document.getElementById('shirt_clr').value = comp
         }
     }
 
