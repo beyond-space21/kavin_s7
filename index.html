@@ -15,11 +15,10 @@
 <body>
     <div class="header">Dress colour matching</div>
 
+    <div id="msg"></div>
+
     <div class="cont">
         <div class="tops box">
-
-            <div id="msg"></div>
-
             <div class="clr_hd">Shirt colour:</div>
             <input type="color" id="shirt_clr" name="favcolor" value="#ffffff">
             <button id="match_fr_shirt">match</button>
@@ -68,7 +67,10 @@
                 // Check if the total file size is available
                 if (evt.lengthComputable) {
                     var percentComplete = (evt.loaded / evt.total) * 100;
-                    document.getElementById('msg').innerHTML = ("Loading: " + percentComplete.toFixed(2) + "%");
+                    document.getElementById('msg').innerHTML = ("Loading: " + percentComplete.toFixed(4) + "%");
+                    if(percentComplete.toFixed(4) == 100.0000){
+                    document.getElementById('msg').style.display = 'none';
+                    }
                 } else {
                     // Fallback if the total size is not available
                     document.getElementById('msg').innerHTML = ("Loading...");

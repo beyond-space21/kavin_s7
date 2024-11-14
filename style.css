@@ -55,3 +55,8 @@ body{
 #renderCanvas{
     border-radius: 100px;
 }
+
+#msg{
+    margin-left: 30px;
+    color: aliceblue;
+}
